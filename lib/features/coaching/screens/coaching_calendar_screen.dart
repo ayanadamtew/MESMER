@@ -8,6 +8,7 @@ import 'package:mesmer_app/features/coaching/providers/coaching_provider.dart';
 import 'package:mesmer_app/shared/models/coaching_session.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/common_widgets.dart';
+import 'package:mesmer_app/core/utils/toast_service.dart';
 
 class CoachingCalendarScreen extends ConsumerStatefulWidget {
   const CoachingCalendarScreen({super.key});
@@ -145,12 +146,7 @@ class _CoachingCalendarScreenState
           if (!ctx.mounted) return;
           Navigator.pop(ctx);
           if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Session scheduled!'),
-              backgroundColor: AppColors.success,
-            ),
-          );
+          ToastService.showSuccess(context, 'Session scheduled!');
         },
       ),
     );

@@ -6,6 +6,7 @@ import 'package:mesmer_app/features/enterprise/providers/enterprise_provider.dar
 import 'package:mesmer_app/shared/models/enterprise.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/loading_overlay.dart';
+import 'package:mesmer_app/core/utils/toast_service.dart';
 
 class EnterpriseOnboardingScreen extends ConsumerStatefulWidget {
   const EnterpriseOnboardingScreen({super.key});
@@ -114,21 +115,11 @@ class _EnterpriseOnboardingScreenState
       await ref.read(enterpriseListProvider.notifier).addEnterprise(enterprise);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enterprise onboarded successfully!'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      ToastService.showSuccess(context, 'Enterprise onboarded successfully!');
       context.go(AppRoutes.enterprises);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      ToastService.showError(context, 'Error: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

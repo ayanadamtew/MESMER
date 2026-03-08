@@ -10,6 +10,7 @@ import 'package:mesmer_app/core/database/isar_service.dart';
 import 'package:mesmer_app/shared/models/coaching_session.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/loading_overlay.dart';
+import 'package:mesmer_app/core/utils/toast_service.dart';
 
 class ActiveSessionScreen extends ConsumerStatefulWidget {
   const ActiveSessionScreen({required this.sessionId, super.key});
@@ -69,13 +70,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
     await _autoSave();
     setState(() => _isSaving = false);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Notes saved'),
-        backgroundColor: AppColors.success,
-        duration: Duration(seconds: 1),
-      ),
-    );
+    ToastService.showSuccess(context, 'Notes saved');
   }
 
   Future<void> _uploadMedia() async {
@@ -149,21 +144,11 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
             .addMediaUri(widget.sessionId, uri);
         await _loadSession();
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Media uploaded successfully'),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastService.showSuccess(context, 'Media uploaded successfully');
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Upload failed: $e'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      ToastService.showError(context, 'Upload failed: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -193,12 +178,7 @@ class _ActiveSessionScreenState extends ConsumerState<ActiveSessionScreen> {
     await _autoSave();
     await ref.read(coachingProvider.notifier).completeSession(widget.sessionId);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Session completed!'),
-        backgroundColor: AppColors.success,
-      ),
-    );
+    ToastService.showSuccess(context, 'Session completed!');
     context.pop();
   }
 

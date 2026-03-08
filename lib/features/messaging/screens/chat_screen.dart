@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/common_widgets.dart';
+import 'package:mesmer_app/core/utils/toast_service.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({required this.chatId, super.key});
@@ -83,12 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Send failed: $e'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      ToastService.showError(context, 'Send failed: $e');
       _msgCtrl.text = text; // restore
     } finally {
       if (mounted) setState(() => _sending = false);

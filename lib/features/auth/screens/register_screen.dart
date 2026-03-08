@@ -5,6 +5,7 @@ import 'package:mesmer_app/features/auth/providers/auth_provider.dart';
 import 'package:mesmer_app/core/config/router_config.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/loading_overlay.dart';
+import 'package:mesmer_app/core/utils/toast_service.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -38,12 +39,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!mounted) return;
     final state = ref.read(authNotifierProvider);
     if (state.hasError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Sign-up failed: \${state.error}'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      ToastService.showError(context, 'Sign-up failed: \${state.error}');
     } else {
       context.go(AppRoutes.enterprises);
     }

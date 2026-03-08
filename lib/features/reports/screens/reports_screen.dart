@@ -7,6 +7,7 @@ import 'package:mesmer_app/shared/models/enterprise.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/common_widgets.dart';
 import 'package:mesmer_app/shared/widgets/loading_overlay.dart';
+import 'package:mesmer_app/core/utils/toast_service.dart';
 import 'package:intl/intl.dart';
 
 class ReportsScreen extends ConsumerStatefulWidget {
@@ -41,12 +42,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Report generation failed: $e'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      ToastService.showError(context, 'Report generation failed: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

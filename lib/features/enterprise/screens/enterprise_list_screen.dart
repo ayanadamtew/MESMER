@@ -7,6 +7,7 @@ import 'package:mesmer_app/features/enterprise/providers/enterprise_provider.dar
 import 'package:mesmer_app/shared/models/enterprise.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/common_widgets.dart';
+import 'package:mesmer_app/core/utils/toast_service.dart';
 import 'package:intl/intl.dart';
 
 class EnterpriseListScreen extends ConsumerStatefulWidget {
@@ -49,9 +50,7 @@ class _EnterpriseListScreenState extends ConsumerState<EnterpriseListScreen> {
                   .read(enterpriseListProvider.notifier)
                   .syncAllPending();
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Sync complete')),
-              );
+              ToastService.showSuccess(context, 'Sync complete');
             },
           ),
         ],
