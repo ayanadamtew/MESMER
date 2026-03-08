@@ -1,3 +1,4 @@
+import 'package:isar/isar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mesmer_app/core/database/isar_service.dart';

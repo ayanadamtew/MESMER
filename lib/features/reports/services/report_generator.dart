@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:intl/intl.dart';
+import 'package:isar/isar.dart';
 import 'package:mesmer_app/core/database/isar_service.dart';
 import 'package:mesmer_app/shared/models/enterprise.dart';
 import 'package:mesmer_app/shared/models/coaching_session.dart';
@@ -265,14 +266,24 @@ class ReportGenerator {
                     color: PdfColors.grey200,
                     borderRadius: pw.BorderRadius.circular(5),
                   ),
-                  child: pw.FractionallySizedBox(
-                    widthFactor: score,
-                    child: pw.Container(
-                      decoration: pw.BoxDecoration(
-                        color: accent,
-                        borderRadius: pw.BorderRadius.circular(5),
-                      ),
-                    ),
+                  child: pw.Row(
+                    children: [
+                      if (score > 0)
+                        pw.Expanded(
+                          flex: (score * 100).toInt(),
+                          child: pw.Container(
+                            decoration: pw.BoxDecoration(
+                              color: accent,
+                              borderRadius: pw.BorderRadius.circular(5),
+                            ),
+                          ),
+                        ),
+                      if (score < 1)
+                        pw.Expanded(
+                          flex: ((1 - score) * 100).toInt(),
+                          child: pw.SizedBox(),
+                        ),
+                    ],
                   ),
                 ),
               ),

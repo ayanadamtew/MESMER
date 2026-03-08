@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mesmer_app/core/database/isar_service.dart';
 import 'package:mesmer_app/core/network/connectivity_service.dart';
