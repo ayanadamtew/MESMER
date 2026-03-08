@@ -31,6 +31,21 @@ class AuthNotifier extends AsyncNotifier<void> {
     });
   }
 
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await Supabase.instance.client.auth.signUp(
+        email: email,
+        password: password,
+        data: {'name': name},
+      );
+    });
+  }
+
   Future<void> signInWithPhone({
     required String phone,
     required String password,

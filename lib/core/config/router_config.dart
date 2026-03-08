@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mesmer_app/features/auth/screens/splash_screen.dart';
 import 'package:mesmer_app/features/auth/screens/login_screen.dart';
+import 'package:mesmer_app/features/auth/screens/register_screen.dart';
 import 'package:mesmer_app/features/auth/providers/auth_provider.dart';
 import 'package:mesmer_app/features/enterprise/screens/enterprise_list_screen.dart';
 import 'package:mesmer_app/features/enterprise/screens/enterprise_onboarding_screen.dart';
@@ -20,6 +21,7 @@ class AppRoutes {
   AppRoutes._();
   static const splash = '/';
   static const login = '/login';
+  static const register = '/register';
   static const shell = '/app';
   static const enterprises = '/app/enterprises';
   static const enterpriseOnboarding = '/app/enterprises/new';
@@ -41,10 +43,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = authState.valueOrNull != null;
       final isOnSplash = state.matchedLocation == AppRoutes.splash;
       final isOnLogin = state.matchedLocation == AppRoutes.login;
+      final isOnRegister = state.matchedLocation == AppRoutes.register;
 
       if (isOnSplash) return null;
-      if (!isLoggedIn && !isOnLogin) return AppRoutes.login;
-      if (isLoggedIn && isOnLogin) return AppRoutes.enterprises;
+      if (!isLoggedIn && !isOnLogin && !isOnRegister) return AppRoutes.login;
+      if (isLoggedIn && (isOnLogin || isOnRegister)) return AppRoutes.enterprises;
       return null;
     },
     routes: [
@@ -55,6 +58,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.login,
         builder: (_, __) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.register,
+        builder: (_, __) => const RegisterScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) => MainShellScreen(child: child),
