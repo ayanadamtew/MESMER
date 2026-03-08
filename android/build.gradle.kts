@@ -16,6 +16,27 @@ subprojects {
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
 subprojects {
+    afterEvaluate {
+        val hasAndroidLibrary = project.plugins.hasPlugin("com.android.library")
+        if (hasAndroidLibrary) {
+            val androidExt = project.extensions.findByName("android")
+            if (androidExt != null) {
+                try {
+                    val getNamespace = androidExt.javaClass.getMethod("getNamespace")
+                    val namespace = getNamespace.invoke(androidExt)
+                    if (namespace == null || namespace.toString().isEmpty()) {
+                        val setNamespace = androidExt.javaClass.getMethod("setNamespace", String::class.java)
+                        setNamespace.invoke(androidExt, project.group.toString())
+                    }
+                } catch (e: Exception) {
+                    // Ignore reflection errors for older AGP versions
+                }
+            }
+        }
+    }
+}
+
+subprojects {
     project.evaluationDependsOn(":app")
 }
 
