@@ -27,6 +27,7 @@ class Enterprise {
   late String businessName;
   late String ownerName;
   String? ownerPhone;
+  @Index()
   String? ownerEmail;
   String? ownerGender;
   int? ownerAge;
@@ -57,12 +58,17 @@ class Enterprise {
   String? baselineLoanStatus;
   double? baselineSalesVolume;
 
-  // MERL Integration
+  // MERL Integration & Linking
   String? merlId;
+  @Index()
+  String? inviteCode;
+  @Index()
+  String? ownerId; // Supabase ID of the enterprise owner
   bool isSynced = false;
   DateTime? syncedAt;
 
   // Metadata
+  @Index()
   late String coachId;
   late DateTime enrolledAt;
   DateTime? updatedAt;

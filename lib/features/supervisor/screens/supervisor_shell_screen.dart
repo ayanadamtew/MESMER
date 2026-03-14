@@ -3,48 +3,42 @@ import 'package:go_router/go_router.dart';
 import 'package:mesmer_app/core/config/router_config.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 
-class MainShellScreen extends StatefulWidget {
-  const MainShellScreen({required this.child, super.key});
+class SupervisorShellScreen extends StatefulWidget {
+  const SupervisorShellScreen({required this.child, super.key});
 
   final Widget child;
 
   @override
-  State<MainShellScreen> createState() => _MainShellScreenState();
+  State<SupervisorShellScreen> createState() => _SupervisorShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class _SupervisorShellScreenState extends State<SupervisorShellScreen> {
   int _selectedIndex = 0;
 
   static const List<_NavItem> _navItems = [
     _NavItem(
+      label: 'Dashboard',
+      icon: Icons.dashboard_outlined,
+      activeIcon: Icons.dashboard_rounded,
+      route: AppRoutes.supervisorHome,
+    ),
+    _NavItem(
       label: 'Enterprises',
       icon: Icons.business_outlined,
       activeIcon: Icons.business_rounded,
-      route: AppRoutes.enterprises,
-    ),
-    _NavItem(
-      label: 'Calendar',
-      icon: Icons.calendar_month_outlined,
-      activeIcon: Icons.calendar_month_rounded,
-      route: AppRoutes.calendar,
+      route: AppRoutes.supervisorEnterprises,
     ),
     _NavItem(
       label: 'Reports',
       icon: Icons.bar_chart_outlined,
       activeIcon: Icons.bar_chart_rounded,
-      route: AppRoutes.reports,
+      route: AppRoutes.supervisorReports,
     ),
     _NavItem(
-      label: 'Messages',
-      icon: Icons.chat_bubble_outline_rounded,
-      activeIcon: Icons.chat_bubble_rounded,
-      route: AppRoutes.messaging,
-    ),
-    _NavItem(
-      label: 'Profile',
-      icon: Icons.person_outline,
-      activeIcon: Icons.person_rounded,
-      route: AppRoutes.coachProfile,
+      label: 'Settings',
+      icon: Icons.settings_outlined,
+      activeIcon: Icons.settings_rounded,
+      route: AppRoutes.supervisorSettings,
     ),
   ];
 

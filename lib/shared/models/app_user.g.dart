@@ -42,24 +42,29 @@ const AppUserSchema = CollectionSchema(
       name: r'lastSyncedAt',
       type: IsarType.dateTime,
     ),
-    r'name': PropertySchema(
+    r'linkedEnterpriseId': PropertySchema(
       id: 5,
+      name: r'linkedEnterpriseId',
+      type: IsarType.string,
+    ),
+    r'name': PropertySchema(
+      id: 6,
       name: r'name',
       type: IsarType.string,
     ),
     r'phone': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'phone',
       type: IsarType.string,
     ),
     r'role': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'role',
       type: IsarType.string,
       enumMap: _AppUserroleEnumValueMap,
     ),
     r'supabaseId': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'supabaseId',
       type: IsarType.string,
     )
@@ -105,6 +110,12 @@ int _appUserEstimateSize(
     }
   }
   bytesCount += 3 + object.email.length * 3;
+  {
+    final value = object.linkedEnterpriseId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
   {
     final value = object.phone;
@@ -128,10 +139,11 @@ void _appUserSerialize(
   writer.writeString(offsets[2], object.email);
   writer.writeBool(offsets[3], object.isActive);
   writer.writeDateTime(offsets[4], object.lastSyncedAt);
-  writer.writeString(offsets[5], object.name);
-  writer.writeString(offsets[6], object.phone);
-  writer.writeString(offsets[7], object.role.name);
-  writer.writeString(offsets[8], object.supabaseId);
+  writer.writeString(offsets[5], object.linkedEnterpriseId);
+  writer.writeString(offsets[6], object.name);
+  writer.writeString(offsets[7], object.phone);
+  writer.writeString(offsets[8], object.role.name);
+  writer.writeString(offsets[9], object.supabaseId);
 }
 
 AppUser _appUserDeserialize(
@@ -147,11 +159,12 @@ AppUser _appUserDeserialize(
   object.id = id;
   object.isActive = reader.readBool(offsets[3]);
   object.lastSyncedAt = reader.readDateTimeOrNull(offsets[4]);
-  object.name = reader.readString(offsets[5]);
-  object.phone = reader.readStringOrNull(offsets[6]);
-  object.role = _AppUserroleValueEnumMap[reader.readStringOrNull(offsets[7])] ??
+  object.linkedEnterpriseId = reader.readStringOrNull(offsets[5]);
+  object.name = reader.readString(offsets[6]);
+  object.phone = reader.readStringOrNull(offsets[7]);
+  object.role = _AppUserroleValueEnumMap[reader.readStringOrNull(offsets[8])] ??
       UserRole.coach;
-  object.supabaseId = reader.readString(offsets[8]);
+  object.supabaseId = reader.readString(offsets[9]);
   return object;
 }
 
@@ -173,13 +186,15 @@ P _appUserDeserializeProp<P>(
     case 4:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
-    case 6:
       return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readString(offset)) as P;
     case 7:
+      return (reader.readStringOrNull(offset)) as P;
+    case 8:
       return (_AppUserroleValueEnumMap[reader.readStringOrNull(offset)] ??
           UserRole.coach) as P;
-    case 8:
+    case 9:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -189,11 +204,13 @@ P _appUserDeserializeProp<P>(
 const _AppUserroleEnumValueMap = {
   r'coach': r'coach',
   r'supervisor': r'supervisor',
+  r'enterprise': r'enterprise',
   r'admin': r'admin',
 };
 const _AppUserroleValueEnumMap = {
   r'coach': UserRole.coach,
   r'supervisor': UserRole.supervisor,
+  r'enterprise': UserRole.enterprise,
   r'admin': UserRole.admin,
 };
 
@@ -847,6 +864,160 @@ extension AppUserQueryFilter
     });
   }
 
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'linkedEnterpriseId',
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'linkedEnterpriseId',
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'linkedEnterpriseId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'linkedEnterpriseId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'linkedEnterpriseId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'linkedEnterpriseId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'linkedEnterpriseId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'linkedEnterpriseId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'linkedEnterpriseId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'linkedEnterpriseId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'linkedEnterpriseId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterFilterCondition>
+      linkedEnterpriseIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'linkedEnterpriseId',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<AppUser, AppUser, QAfterFilterCondition> nameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1451,6 +1622,18 @@ extension AppUserQuerySortBy on QueryBuilder<AppUser, AppUser, QSortBy> {
     });
   }
 
+  QueryBuilder<AppUser, AppUser, QAfterSortBy> sortByLinkedEnterpriseId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'linkedEnterpriseId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterSortBy> sortByLinkedEnterpriseIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'linkedEnterpriseId', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppUser, AppUser, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1574,6 +1757,18 @@ extension AppUserQuerySortThenBy
     });
   }
 
+  QueryBuilder<AppUser, AppUser, QAfterSortBy> thenByLinkedEnterpriseId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'linkedEnterpriseId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppUser, AppUser, QAfterSortBy> thenByLinkedEnterpriseIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'linkedEnterpriseId', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppUser, AppUser, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1657,6 +1852,14 @@ extension AppUserQueryWhereDistinct
     });
   }
 
+  QueryBuilder<AppUser, AppUser, QDistinct> distinctByLinkedEnterpriseId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'linkedEnterpriseId',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<AppUser, AppUser, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1721,6 +1924,13 @@ extension AppUserQueryProperty
   QueryBuilder<AppUser, DateTime?, QQueryOperations> lastSyncedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastSyncedAt');
+    });
+  }
+
+  QueryBuilder<AppUser, String?, QQueryOperations>
+      linkedEnterpriseIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'linkedEnterpriseId');
     });
   }
 

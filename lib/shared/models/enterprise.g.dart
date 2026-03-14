@@ -78,89 +78,99 @@ const EnterpriseSchema = CollectionSchema(
       name: r'enrolledAt',
       type: IsarType.dateTime,
     ),
-    r'isSynced': PropertySchema(
+    r'inviteCode': PropertySchema(
       id: 12,
+      name: r'inviteCode',
+      type: IsarType.string,
+    ),
+    r'isSynced': PropertySchema(
+      id: 13,
       name: r'isSynced',
       type: IsarType.bool,
     ),
     r'latitude': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'latitude',
       type: IsarType.double,
     ),
     r'longitude': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'longitude',
       type: IsarType.double,
     ),
     r'merlId': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'merlId',
       type: IsarType.string,
     ),
     r'ownerAge': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'ownerAge',
       type: IsarType.long,
     ),
     r'ownerEmail': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'ownerEmail',
       type: IsarType.string,
     ),
     r'ownerGender': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'ownerGender',
       type: IsarType.string,
     ),
+    r'ownerId': PropertySchema(
+      id: 20,
+      name: r'ownerId',
+      type: IsarType.string,
+    ),
     r'ownerName': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'ownerName',
       type: IsarType.string,
     ),
     r'ownerPhone': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'ownerPhone',
       type: IsarType.string,
     ),
     r'region': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'region',
       type: IsarType.string,
     ),
     r'sector': PropertySchema(
-      id: 22,
+      id: 24,
       name: r'sector',
       type: IsarType.string,
       enumMap: _EnterprisesectorEnumValueMap,
     ),
     r'streetAddress': PropertySchema(
-      id: 23,
+      id: 25,
       name: r'streetAddress',
       type: IsarType.string,
     ),
     r'subsector': PropertySchema(
-      id: 24,
+      id: 26,
       name: r'subsector',
       type: IsarType.string,
     ),
     r'syncedAt': PropertySchema(
-      id: 25,
+      id: 27,
       name: r'syncedAt',
       type: IsarType.dateTime,
     ),
     r'updatedAt': PropertySchema(
-      id: 26,
+      id: 28,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'uuid': PropertySchema(
-      id: 27,
+      id: 29,
       name: r'uuid',
       type: IsarType.string,
     ),
     r'yearFounded': PropertySchema(
-      id: 28,
+      id: 30,
       name: r'yearFounded',
       type: IsarType.long,
     )
@@ -179,6 +189,58 @@ const EnterpriseSchema = CollectionSchema(
       properties: [
         IndexPropertySchema(
           name: r'uuid',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'ownerEmail': IndexSchema(
+      id: -82102301092295674,
+      name: r'ownerEmail',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'ownerEmail',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'inviteCode': IndexSchema(
+      id: 1149539950050509013,
+      name: r'inviteCode',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'inviteCode',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'ownerId': IndexSchema(
+      id: -7594796109721319539,
+      name: r'ownerId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'ownerId',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'coachId': IndexSchema(
+      id: -2707681522534404969,
+      name: r'coachId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'coachId',
           type: IndexType.hash,
           caseSensitive: true,
         )
@@ -227,6 +289,12 @@ int _enterpriseEstimateSize(
     }
   }
   {
+    final value = object.inviteCode;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.merlId;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -240,6 +308,12 @@ int _enterpriseEstimateSize(
   }
   {
     final value = object.ownerGender;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.ownerId;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -292,23 +366,25 @@ void _enterpriseSerialize(
   writer.writeString(offsets[9], object.district);
   writer.writeLong(offsets[10], object.employeeCount);
   writer.writeDateTime(offsets[11], object.enrolledAt);
-  writer.writeBool(offsets[12], object.isSynced);
-  writer.writeDouble(offsets[13], object.latitude);
-  writer.writeDouble(offsets[14], object.longitude);
-  writer.writeString(offsets[15], object.merlId);
-  writer.writeLong(offsets[16], object.ownerAge);
-  writer.writeString(offsets[17], object.ownerEmail);
-  writer.writeString(offsets[18], object.ownerGender);
-  writer.writeString(offsets[19], object.ownerName);
-  writer.writeString(offsets[20], object.ownerPhone);
-  writer.writeString(offsets[21], object.region);
-  writer.writeString(offsets[22], object.sector.name);
-  writer.writeString(offsets[23], object.streetAddress);
-  writer.writeString(offsets[24], object.subsector);
-  writer.writeDateTime(offsets[25], object.syncedAt);
-  writer.writeDateTime(offsets[26], object.updatedAt);
-  writer.writeString(offsets[27], object.uuid);
-  writer.writeLong(offsets[28], object.yearFounded);
+  writer.writeString(offsets[12], object.inviteCode);
+  writer.writeBool(offsets[13], object.isSynced);
+  writer.writeDouble(offsets[14], object.latitude);
+  writer.writeDouble(offsets[15], object.longitude);
+  writer.writeString(offsets[16], object.merlId);
+  writer.writeLong(offsets[17], object.ownerAge);
+  writer.writeString(offsets[18], object.ownerEmail);
+  writer.writeString(offsets[19], object.ownerGender);
+  writer.writeString(offsets[20], object.ownerId);
+  writer.writeString(offsets[21], object.ownerName);
+  writer.writeString(offsets[22], object.ownerPhone);
+  writer.writeString(offsets[23], object.region);
+  writer.writeString(offsets[24], object.sector.name);
+  writer.writeString(offsets[25], object.streetAddress);
+  writer.writeString(offsets[26], object.subsector);
+  writer.writeDateTime(offsets[27], object.syncedAt);
+  writer.writeDateTime(offsets[28], object.updatedAt);
+  writer.writeString(offsets[29], object.uuid);
+  writer.writeLong(offsets[30], object.yearFounded);
 }
 
 Enterprise _enterpriseDeserialize(
@@ -333,25 +409,27 @@ Enterprise _enterpriseDeserialize(
   object.employeeCount = reader.readLongOrNull(offsets[10]);
   object.enrolledAt = reader.readDateTime(offsets[11]);
   object.id = id;
-  object.isSynced = reader.readBool(offsets[12]);
-  object.latitude = reader.readDoubleOrNull(offsets[13]);
-  object.longitude = reader.readDoubleOrNull(offsets[14]);
-  object.merlId = reader.readStringOrNull(offsets[15]);
-  object.ownerAge = reader.readLongOrNull(offsets[16]);
-  object.ownerEmail = reader.readStringOrNull(offsets[17]);
-  object.ownerGender = reader.readStringOrNull(offsets[18]);
-  object.ownerName = reader.readString(offsets[19]);
-  object.ownerPhone = reader.readStringOrNull(offsets[20]);
-  object.region = reader.readStringOrNull(offsets[21]);
+  object.inviteCode = reader.readStringOrNull(offsets[12]);
+  object.isSynced = reader.readBool(offsets[13]);
+  object.latitude = reader.readDoubleOrNull(offsets[14]);
+  object.longitude = reader.readDoubleOrNull(offsets[15]);
+  object.merlId = reader.readStringOrNull(offsets[16]);
+  object.ownerAge = reader.readLongOrNull(offsets[17]);
+  object.ownerEmail = reader.readStringOrNull(offsets[18]);
+  object.ownerGender = reader.readStringOrNull(offsets[19]);
+  object.ownerId = reader.readStringOrNull(offsets[20]);
+  object.ownerName = reader.readString(offsets[21]);
+  object.ownerPhone = reader.readStringOrNull(offsets[22]);
+  object.region = reader.readStringOrNull(offsets[23]);
   object.sector =
-      _EnterprisesectorValueEnumMap[reader.readStringOrNull(offsets[22])] ??
+      _EnterprisesectorValueEnumMap[reader.readStringOrNull(offsets[24])] ??
           BusinessSector.agriculture;
-  object.streetAddress = reader.readStringOrNull(offsets[23]);
-  object.subsector = reader.readStringOrNull(offsets[24]);
-  object.syncedAt = reader.readDateTimeOrNull(offsets[25]);
-  object.updatedAt = reader.readDateTimeOrNull(offsets[26]);
-  object.uuid = reader.readString(offsets[27]);
-  object.yearFounded = reader.readLongOrNull(offsets[28]);
+  object.streetAddress = reader.readStringOrNull(offsets[25]);
+  object.subsector = reader.readStringOrNull(offsets[26]);
+  object.syncedAt = reader.readDateTimeOrNull(offsets[27]);
+  object.updatedAt = reader.readDateTimeOrNull(offsets[28]);
+  object.uuid = reader.readString(offsets[29]);
+  object.yearFounded = reader.readLongOrNull(offsets[30]);
   return object;
 }
 
@@ -389,39 +467,43 @@ P _enterpriseDeserializeProp<P>(
     case 11:
       return (reader.readDateTime(offset)) as P;
     case 12:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 13:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 14:
       return (reader.readDoubleOrNull(offset)) as P;
     case 15:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 16:
-      return (reader.readLongOrNull(offset)) as P;
-    case 17:
       return (reader.readStringOrNull(offset)) as P;
+    case 17:
+      return (reader.readLongOrNull(offset)) as P;
     case 18:
       return (reader.readStringOrNull(offset)) as P;
     case 19:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 20:
       return (reader.readStringOrNull(offset)) as P;
     case 21:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 22:
-      return (_EnterprisesectorValueEnumMap[reader.readStringOrNull(offset)] ??
-          BusinessSector.agriculture) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 23:
       return (reader.readStringOrNull(offset)) as P;
     case 24:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_EnterprisesectorValueEnumMap[reader.readStringOrNull(offset)] ??
+          BusinessSector.agriculture) as P;
     case 25:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 26:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 27:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 28:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 29:
+      return (reader.readString(offset)) as P;
+    case 30:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -642,6 +724,248 @@ extension EnterpriseQueryWhere
               indexName: r'uuid',
               lower: [],
               upper: [uuid],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> ownerEmailIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'ownerEmail',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause>
+      ownerEmailIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'ownerEmail',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> ownerEmailEqualTo(
+      String? ownerEmail) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'ownerEmail',
+        value: [ownerEmail],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> ownerEmailNotEqualTo(
+      String? ownerEmail) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'ownerEmail',
+              lower: [],
+              upper: [ownerEmail],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'ownerEmail',
+              lower: [ownerEmail],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'ownerEmail',
+              lower: [ownerEmail],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'ownerEmail',
+              lower: [],
+              upper: [ownerEmail],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> inviteCodeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'inviteCode',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause>
+      inviteCodeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'inviteCode',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> inviteCodeEqualTo(
+      String? inviteCode) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'inviteCode',
+        value: [inviteCode],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> inviteCodeNotEqualTo(
+      String? inviteCode) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'inviteCode',
+              lower: [],
+              upper: [inviteCode],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'inviteCode',
+              lower: [inviteCode],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'inviteCode',
+              lower: [inviteCode],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'inviteCode',
+              lower: [],
+              upper: [inviteCode],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> ownerIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'ownerId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> ownerIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'ownerId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> ownerIdEqualTo(
+      String? ownerId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'ownerId',
+        value: [ownerId],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> ownerIdNotEqualTo(
+      String? ownerId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'ownerId',
+              lower: [],
+              upper: [ownerId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'ownerId',
+              lower: [ownerId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'ownerId',
+              lower: [ownerId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'ownerId',
+              lower: [],
+              upper: [ownerId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> coachIdEqualTo(
+      String coachId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'coachId',
+        value: [coachId],
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterWhereClause> coachIdNotEqualTo(
+      String coachId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'coachId',
+              lower: [],
+              upper: [coachId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'coachId',
+              lower: [coachId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'coachId',
+              lower: [coachId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'coachId',
+              lower: [],
+              upper: [coachId],
               includeUpper: false,
             ));
       }
@@ -2089,6 +2413,159 @@ extension EnterpriseQueryFilter
     });
   }
 
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'inviteCode',
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'inviteCode',
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> inviteCodeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'inviteCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'inviteCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'inviteCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> inviteCodeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'inviteCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'inviteCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'inviteCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'inviteCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> inviteCodeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'inviteCode',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'inviteCode',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      inviteCodeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'inviteCode',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> isSyncedEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
@@ -2781,6 +3258,155 @@ extension EnterpriseQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'ownerGender',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'ownerId',
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      ownerIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'ownerId',
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ownerId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      ownerIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'ownerId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'ownerId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'ownerId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'ownerId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'ownerId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'ownerId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'ownerId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition> ownerIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ownerId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterFilterCondition>
+      ownerIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'ownerId',
         value: '',
       ));
     });
@@ -4165,6 +4791,18 @@ extension EnterpriseQuerySortBy
     });
   }
 
+  QueryBuilder<Enterprise, Enterprise, QAfterSortBy> sortByInviteCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inviteCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterSortBy> sortByInviteCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inviteCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<Enterprise, Enterprise, QAfterSortBy> sortByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
@@ -4246,6 +4884,18 @@ extension EnterpriseQuerySortBy
   QueryBuilder<Enterprise, Enterprise, QAfterSortBy> sortByOwnerGenderDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ownerGender', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterSortBy> sortByOwnerId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ownerId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterSortBy> sortByOwnerIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ownerId', Sort.desc);
     });
   }
 
@@ -4535,6 +5185,18 @@ extension EnterpriseQuerySortThenBy
     });
   }
 
+  QueryBuilder<Enterprise, Enterprise, QAfterSortBy> thenByInviteCode() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inviteCode', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterSortBy> thenByInviteCodeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'inviteCode', Sort.desc);
+    });
+  }
+
   QueryBuilder<Enterprise, Enterprise, QAfterSortBy> thenByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
@@ -4616,6 +5278,18 @@ extension EnterpriseQuerySortThenBy
   QueryBuilder<Enterprise, Enterprise, QAfterSortBy> thenByOwnerGenderDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ownerGender', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterSortBy> thenByOwnerId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ownerId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QAfterSortBy> thenByOwnerIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ownerId', Sort.desc);
     });
   }
 
@@ -4825,6 +5499,13 @@ extension EnterpriseQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Enterprise, Enterprise, QDistinct> distinctByInviteCode(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'inviteCode', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Enterprise, Enterprise, QDistinct> distinctByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSynced');
@@ -4867,6 +5548,13 @@ extension EnterpriseQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'ownerGender', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Enterprise, Enterprise, QDistinct> distinctByOwnerId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'ownerId', caseSensitive: caseSensitive);
     });
   }
 
@@ -5023,6 +5711,12 @@ extension EnterpriseQueryProperty
     });
   }
 
+  QueryBuilder<Enterprise, String?, QQueryOperations> inviteCodeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'inviteCode');
+    });
+  }
+
   QueryBuilder<Enterprise, bool, QQueryOperations> isSyncedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSynced');
@@ -5062,6 +5756,12 @@ extension EnterpriseQueryProperty
   QueryBuilder<Enterprise, String?, QQueryOperations> ownerGenderProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ownerGender');
+    });
+  }
+
+  QueryBuilder<Enterprise, String?, QQueryOperations> ownerIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ownerId');
     });
   }
 

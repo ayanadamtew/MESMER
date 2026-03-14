@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mesmer_app/core/config/router_config.dart';
 import 'package:mesmer_app/core/network/connectivity_service.dart';
+import 'package:mesmer_app/features/auth/providers/auth_provider.dart';
 import 'package:mesmer_app/features/enterprise/providers/enterprise_provider.dart';
 import 'package:mesmer_app/shared/models/enterprise.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
@@ -52,6 +53,27 @@ class _EnterpriseListScreenState extends ConsumerState<EnterpriseListScreen> {
               if (!context.mounted) return;
               ToastService.showSuccess(context, 'Sync complete');
             },
+          ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded),
+            tooltip: 'Settings',
+            onSelected: (value) async {
+              if (value == 'logout') {
+                await ref.read(authNotifierProvider.notifier).signOut();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout_rounded, size: 20),
+                    SizedBox(width: AppSpacing.sm),
+                    Text('Logout'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -204,9 +226,26 @@ class _EnterpriseCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    color: AppColors.primary,
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert_rounded, size: 20, color: AppColors.textSecondaryLight),
+                    padding: EdgeInsets.zero,
+                    onSelected: (val) {
+                      if (val == 'edit') {
+                        context.push(AppRoutes.enterpriseEdit, extra: enterprise);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_outlined, size: 18),
+                            SizedBox(width: AppSpacing.sm),
+                            Text('Edit Profile'),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(

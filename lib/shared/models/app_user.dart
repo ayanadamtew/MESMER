@@ -2,7 +2,7 @@ import 'package:isar/isar.dart';
 
 part 'app_user.g.dart';
 
-enum UserRole { coach, supervisor, admin }
+enum UserRole { coach, supervisor, enterprise, admin }
 
 @collection
 class AppUser {
@@ -22,5 +22,6 @@ class AppUser {
   DateTime? lastSyncedAt;
 
   String? avatarUrl;
+  String? linkedEnterpriseId;
   bool isActive = true;
 }

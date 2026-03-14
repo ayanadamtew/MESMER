@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mesmer_app/features/auth/providers/auth_provider.dart';
 import 'package:mesmer_app/core/config/router_config.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -40,7 +41,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (!mounted) return;
     final user = ref.read(currentUserProvider);
     if (user != null) {
-      context.go(AppRoutes.enterprises);
+      final role = user.userMetadata?['role'] ?? 'coach';
+      if (role == 'supervisor') {
+        context.go(AppRoutes.supervisorHome);
+      } else if (role == 'enterprise') {
+        context.go(AppRoutes.enterpriseHome);
+      } else {
+        context.go(AppRoutes.coachHome);
+      }
     } else {
       context.go(AppRoutes.login);
     }

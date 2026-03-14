@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mesmer_app/core/database/isar_service.dart';
+import 'package:mesmer_app/shared/models/app_user.dart';
+import 'package:isar/isar.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -12,6 +15,10 @@ final authStateProvider = StreamProvider<User?>((ref) {
 
 final currentUserProvider = Provider<User?>((ref) {
   return ref.watch(authStateProvider).valueOrNull;
+});
+
+final appUserProvider = FutureProvider.family<AppUser?, String>((ref, supabaseId) async {
+  return IsarService.users.filter().supabaseIdEqualTo(supabaseId).findFirst();
 });
 
 class AuthNotifier extends AsyncNotifier<void> {
@@ -35,13 +42,17 @@ class AuthNotifier extends AsyncNotifier<void> {
     required String email,
     required String password,
     required String name,
+    required String role,
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       await Supabase.instance.client.auth.signUp(
         email: email,
         password: password,
-        data: {'name': name},
+        data: {
+          'name': name,
+          'role': role,
+        },
       );
     });
   }

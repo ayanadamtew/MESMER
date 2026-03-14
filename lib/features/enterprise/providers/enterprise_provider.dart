@@ -1,11 +1,19 @@
+import 'dart:math';
 import 'package:isar/isar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mesmer_app/core/database/isar_service.dart';
 import 'package:mesmer_app/shared/models/enterprise.dart';
 import 'package:mesmer_app/features/enterprise/repositories/merl_repository.dart';
+import 'package:mesmer_app/features/auth/providers/auth_provider.dart';
 import 'package:mesmer_app/core/network/connectivity_service.dart';
+
+String _generateInviteCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  final rnd = Random();
+  return String.fromCharCodes(Iterable.generate(
+      6, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+}
 
 final enterpriseListProvider =
     AsyncNotifierProvider<EnterpriseListNotifier, List<Enterprise>>(
@@ -15,11 +23,18 @@ final enterpriseListProvider =
 class EnterpriseListNotifier extends AsyncNotifier<List<Enterprise>> {
   @override
   Future<List<Enterprise>> build() async {
-    return IsarService.enterprises.where().findAll();
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return [];
+    
+    return IsarService.enterprises
+        .filter()
+        .coachIdEqualTo(user.id)
+        .findAll();
   }
 
   Future<void> addEnterprise(Enterprise enterprise) async {
     enterprise.uuid = const Uuid().v4();
+    enterprise.inviteCode = _generateInviteCode();
     enterprise.enrolledAt = DateTime.now();
     enterprise.isSynced = false;
 
@@ -27,20 +42,26 @@ class EnterpriseListNotifier extends AsyncNotifier<List<Enterprise>> {
       await isar.enterprises.put(enterprise);
     });
 
-    state = AsyncData(await IsarService.enterprises.where().findAll());
+    ref.invalidateSelf();
 
     // Attempt cloud sync if online
     if (await ConnectivityService.isConnected()) {
-      final repo = ref.read(merlRepositoryProvider);
-      await repo.pushEnterprise(enterprise);
+      try {
+        final repo = ref.read(merlRepositoryProvider);
+        await repo.pushEnterprise(enterprise);
 
-      await IsarService.write((isar) async {
-        enterprise.isSynced = true;
-        enterprise.syncedAt = DateTime.now();
-        await isar.enterprises.put(enterprise);
-      });
+        await IsarService.write((isar) async {
+          enterprise.isSynced = true;
+          enterprise.syncedAt = DateTime.now();
+          await isar.enterprises.put(enterprise);
+        });
 
-      state = AsyncData(await IsarService.enterprises.where().findAll());
+        ref.invalidateSelf();
+      } catch (e) {
+        // Silently fail cloud sync if table doesn't exist, leave isSynced = false
+        // ignore: avoid_print
+        print('Cloud sync failed: $e');
+      }
     }
   }
 
@@ -52,17 +73,23 @@ class EnterpriseListNotifier extends AsyncNotifier<List<Enterprise>> {
       await isar.enterprises.put(enterprise);
     });
 
-    state = AsyncData(await IsarService.enterprises.where().findAll());
+    ref.invalidateSelf();
 
     if (await ConnectivityService.isConnected()) {
-      final repo = ref.read(merlRepositoryProvider);
-      await repo.pushEnterprise(enterprise);
-      await IsarService.write((isar) async {
-        enterprise.isSynced = true;
-        enterprise.syncedAt = DateTime.now();
-        await isar.enterprises.put(enterprise);
-      });
-      state = AsyncData(await IsarService.enterprises.where().findAll());
+      try {
+        final repo = ref.read(merlRepositoryProvider);
+        await repo.pushEnterprise(enterprise);
+        await IsarService.write((isar) async {
+          enterprise.isSynced = true;
+          enterprise.syncedAt = DateTime.now();
+          await isar.enterprises.put(enterprise);
+        });
+        ref.invalidateSelf();
+      } catch (e) {
+        // Silently fail cloud sync if table doesn't exist, leave isSynced = false
+        // ignore: avoid_print
+        print('Cloud sync failed: $e');
+      }
     }
   }
 
@@ -87,7 +114,7 @@ class EnterpriseListNotifier extends AsyncNotifier<List<Enterprise>> {
         // Continue trying other records
       }
     }
-    state = AsyncData(await IsarService.enterprises.where().findAll());
+    ref.invalidateSelf();
   }
 }
 

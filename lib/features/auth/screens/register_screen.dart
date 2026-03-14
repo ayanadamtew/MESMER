@@ -6,6 +6,8 @@ import 'package:mesmer_app/core/config/router_config.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/loading_overlay.dart';
 import 'package:mesmer_app/core/utils/toast_service.dart';
+import 'package:mesmer_app/shared/models/app_user.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -19,6 +21,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  UserRole _selectedRole = UserRole.coach;
   bool _obscurePassword = true;
 
   @override
@@ -35,13 +38,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           name: _nameController.text.trim(),
+          role: _selectedRole.name,
         );
     if (!mounted) return;
     final state = ref.read(authNotifierProvider);
     if (state.hasError) {
-      ToastService.showError(context, 'Sign-up failed: \${state.error}');
+      String errorMessage = state.error.toString();
+      if (state.error is AuthException) {
+         errorMessage = (state.error as AuthException).message;
+      }
+      ToastService.showError(context, 'Sign-up failed: $errorMessage');
     } else {
-      context.go(AppRoutes.enterprises);
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session == null) {
+        ToastService.showSuccess(
+          context,
+          'Success! Please check your email to confirm your account.',
+        );
+        context.go(AppRoutes.login);
+      } else {
+        final role = _selectedRole.name;
+        if (role == 'supervisor') {
+          context.go(AppRoutes.supervisorHome);
+        } else if (role == 'enterprise') {
+          context.go(AppRoutes.enterpriseHome);
+        } else {
+          context.go(AppRoutes.coachHome);
+        }
+      }
     }
   }
 
@@ -112,6 +136,37 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           validator: (v) => (v == null || !v.contains('@'))
                               ? 'Valid email is required'
                               : null,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        DropdownButtonFormField<UserRole>(
+                          value: _selectedRole,
+                          decoration: const InputDecoration(
+                            labelText: 'I am a...',
+                            prefixIcon: Icon(Icons.badge_outlined),
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: UserRole.coach,
+                              child: Text('Business Coach'),
+                            ),
+                            DropdownMenuItem(
+                              value: UserRole.supervisor,
+                              child: Text('Supervisor / Program Manager'),
+                            ),
+                            DropdownMenuItem(
+                              value: UserRole.enterprise,
+                              child: Text('Enterprise Owner'),
+                            ),
+                            DropdownMenuItem(
+                              value: UserRole.admin,
+                              child: Text('Administrator'),
+                            ),
+                          ],
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() => _selectedRole = val);
+                            }
+                          },
                         ),
                         const SizedBox(height: AppSpacing.md),
                         TextFormField(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mesmer_app/core/config/router_config.dart';
+import 'package:mesmer_app/features/auth/providers/auth_provider.dart';
 import 'package:mesmer_app/features/enterprise/providers/enterprise_provider.dart';
 import 'package:mesmer_app/shared/models/enterprise.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
@@ -9,7 +10,9 @@ import 'package:mesmer_app/shared/widgets/loading_overlay.dart';
 import 'package:mesmer_app/core/utils/toast_service.dart';
 
 class EnterpriseOnboardingScreen extends ConsumerStatefulWidget {
-  const EnterpriseOnboardingScreen({super.key});
+  const EnterpriseOnboardingScreen({super.key, this.existingEnterprise});
+
+  final Enterprise? existingEnterprise;
 
   @override
   ConsumerState<EnterpriseOnboardingScreen> createState() =>
@@ -47,6 +50,34 @@ class _EnterpriseOnboardingScreenState
   final _baselineBookkeepingCtrl = TextEditingController();
   final _baselineSalesCtrl = TextEditingController();
   final _page3Key = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.existingEnterprise != null) {
+      final e = widget.existingEnterprise!;
+      _businessNameCtrl.text = e.businessName;
+      _ownerNameCtrl.text = e.ownerName;
+      _ownerPhoneCtrl.text = e.ownerPhone ?? '';
+      _ownerEmailCtrl.text = e.ownerEmail ?? '';
+      _ownerGender = e.ownerGender;
+      _ownerAgeCtrl.text = e.ownerAge?.toString() ?? '';
+      
+      _sector = e.sector;
+      _subsectorCtrl.text = e.subsector ?? '';
+      _employeeCountCtrl.text = e.employeeCount?.toString() ?? '';
+      _yearFoundedCtrl.text = e.yearFounded?.toString() ?? '';
+      
+      _addressCtrl.text = e.streetAddress ?? '';
+      _cityCtrl.text = e.city ?? '';
+      _districtCtrl.text = e.district ?? '';
+      _regionCtrl.text = e.region ?? '';
+      
+      _baselineLoanStatus = e.baselineLoanStatus ?? 'No loan';
+      _baselineBookkeepingCtrl.text = e.baselineBookkeepingScore?.toString() ?? '';
+      _baselineSalesCtrl.text = e.baselineSalesVolume?.toString() ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -89,7 +120,10 @@ class _EnterpriseOnboardingScreenState
   Future<void> _submit() async {
     setState(() => _isLoading = true);
     try {
-      final enterprise = Enterprise()
+      final isEdit = widget.existingEnterprise != null;
+      final enterprise = widget.existingEnterprise ?? Enterprise();
+
+      enterprise
         ..businessName = _businessNameCtrl.text.trim()
         ..ownerName = _ownerNameCtrl.text.trim()
         ..ownerPhone = _ownerPhoneCtrl.text.trim()
@@ -109,20 +143,87 @@ class _EnterpriseOnboardingScreenState
         ..baselineLoanStatus = _baselineLoanStatus
         ..baselineBookkeepingScore =
             double.tryParse(_baselineBookkeepingCtrl.text)
-        ..baselineSalesVolume = double.tryParse(_baselineSalesCtrl.text)
-        ..coachId = 'current-coach-id'; // Replace with actual auth user id
+        ..baselineSalesVolume = double.tryParse(_baselineSalesCtrl.text);
 
-      await ref.read(enterpriseListProvider.notifier).addEnterprise(enterprise);
+      if (!isEdit) {
+        final user = ref.read(currentUserProvider);
+        enterprise.coachId = user?.id ?? 'unknown';
+        await ref.read(enterpriseListProvider.notifier).addEnterprise(enterprise);
+      } else {
+        await ref.read(enterpriseListProvider.notifier).updateEnterprise(enterprise);
+      }
 
       if (!mounted) return;
-      ToastService.showSuccess(context, 'Enterprise onboarded successfully!');
-      context.go(AppRoutes.enterprises);
+      
+      if (!isEdit && enterprise.inviteCode != null) {
+        await _showInviteCodeDialog(context, enterprise.businessName, enterprise.inviteCode!);
+      } else {
+        ToastService.showSuccess(
+          context,
+          'Enterprise updated successfully!',
+        );
+      }
+      
+      if (!mounted) return;
+      final user = ref.read(currentUserProvider);
+      final role = user?.userMetadata?['role'] ?? 'coach';
+      if (role == 'supervisor') {
+        context.go(AppRoutes.supervisorHome);
+      } else if (role == 'enterprise') {
+        context.go(AppRoutes.enterpriseHome);
+      } else {
+        context.go(AppRoutes.coachHome);
+      }
     } catch (e) {
       if (!mounted) return;
       ToastService.showError(context, 'Error: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _showInviteCodeDialog(BuildContext context, String businessName, String inviteCode) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Enterprise Created! 🎉'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Share this invite code with the owner of $businessName so they can link their account in the app.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.md),
+              decoration: BoxDecoration(
+                color: AppColors.cardDark,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(color: AppColors.primary, width: 2),
+              ),
+              child: Text(
+                inviteCode,
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 4,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -132,7 +233,7 @@ class _EnterpriseOnboardingScreenState
       message: 'Saving enterprise…',
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('New Enterprise'),
+          title: Text(widget.existingEnterprise != null ? 'Edit Enterprise' : 'New Enterprise'),
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => context.pop(),

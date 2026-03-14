@@ -141,4 +141,72 @@ class NotificationService {
   Future<void> cancelAll() async {
     await _localNotifications.cancelAll();
   }
+
+  /// Schedule a training session reminder.
+  Future<void> scheduleTrainingAlert({
+    required String trainingTitle,
+    required String enterpriseName,
+    required DateTime scheduledAt,
+    int minutesBefore = 60,
+  }) async {
+    final reminderTime = scheduledAt.subtract(Duration(minutes: minutesBefore));
+    if (reminderTime.isBefore(DateTime.now())) return;
+
+    const androidDetails = AndroidNotificationDetails(
+      'mesmer_training',
+      'Training Reminders',
+      channelDescription: 'Upcoming training session reminders',
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/ic_launcher',
+    );
+
+    const details = NotificationDetails(android: androidDetails);
+
+    await _localNotifications.zonedSchedule(
+      scheduledAt.hashCode,
+      'Training: $trainingTitle',
+      '$enterpriseName — starts in $minutesBefore minutes',
+      tz.TZDateTime.from(reminderTime, tz.local),
+      details,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  /// Trigger a milestone achievement notification.
+  Future<void> scheduleMilestoneAlert({
+    required String enterpriseName,
+    required String milestoneTitle,
+    required String description,
+  }) async {
+    const androidDetails = AndroidNotificationDetails(
+      'mesmer_milestones',
+      'Milestone Alerts',
+      channelDescription: 'Enterprise milestone achievements',
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/ic_launcher',
+    );
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _localNotifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      '🎉 $milestoneTitle',
+      '$enterpriseName: $description',
+      details,
+      payload: 'milestone',
+    );
+  }
 }

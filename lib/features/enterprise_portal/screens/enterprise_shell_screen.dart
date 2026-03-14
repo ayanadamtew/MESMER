@@ -3,48 +3,48 @@ import 'package:go_router/go_router.dart';
 import 'package:mesmer_app/core/config/router_config.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 
-class MainShellScreen extends StatefulWidget {
-  const MainShellScreen({required this.child, super.key});
+class EnterpriseShellScreen extends StatefulWidget {
+  const EnterpriseShellScreen({required this.child, super.key});
 
   final Widget child;
 
   @override
-  State<MainShellScreen> createState() => _MainShellScreenState();
+  State<EnterpriseShellScreen> createState() => _EnterpriseShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class _EnterpriseShellScreenState extends State<EnterpriseShellScreen> {
   int _selectedIndex = 0;
 
   static const List<_NavItem> _navItems = [
     _NavItem(
-      label: 'Enterprises',
-      icon: Icons.business_outlined,
-      activeIcon: Icons.business_rounded,
-      route: AppRoutes.enterprises,
+      label: 'Home',
+      icon: Icons.home_outlined,
+      activeIcon: Icons.home_rounded,
+      route: AppRoutes.enterpriseHome,
     ),
     _NavItem(
-      label: 'Calendar',
-      icon: Icons.calendar_month_outlined,
-      activeIcon: Icons.calendar_month_rounded,
-      route: AppRoutes.calendar,
-    ),
-    _NavItem(
-      label: 'Reports',
-      icon: Icons.bar_chart_outlined,
-      activeIcon: Icons.bar_chart_rounded,
-      route: AppRoutes.reports,
+      label: 'Tips',
+      icon: Icons.lightbulb_outline,
+      activeIcon: Icons.lightbulb_rounded,
+      route: AppRoutes.enterpriseRecommendations,
     ),
     _NavItem(
       label: 'Messages',
       icon: Icons.chat_bubble_outline_rounded,
       activeIcon: Icons.chat_bubble_rounded,
-      route: AppRoutes.messaging,
+      route: AppRoutes.enterpriseMessages,
+    ),
+    _NavItem(
+      label: 'Alerts',
+      icon: Icons.notifications_outlined,
+      activeIcon: Icons.notifications_rounded,
+      route: AppRoutes.enterpriseNotifications,
     ),
     _NavItem(
       label: 'Profile',
       icon: Icons.person_outline,
       activeIcon: Icons.person_rounded,
-      route: AppRoutes.coachProfile,
+      route: AppRoutes.enterpriseProfile,
     ),
   ];
 

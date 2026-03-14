@@ -5,6 +5,8 @@ import 'package:mesmer_app/shared/models/enterprise.dart';
 import 'package:mesmer_app/shared/models/diagnosis_assessment.dart';
 import 'package:mesmer_app/shared/models/coaching_session.dart';
 import 'package:mesmer_app/shared/models/progress_indicator_record.dart';
+import 'package:mesmer_app/shared/models/training_schedule.dart';
+import 'package:mesmer_app/shared/models/message.dart';
 
 class IsarService {
   IsarService._();
@@ -21,6 +23,8 @@ class IsarService {
         DiagnosisAssessmentSchema,
         CoachingSessionSchema,
         ProgressIndicatorRecordSchema,
+        TrainingScheduleSchema,
+        MessageSchema,
       ],
       directory: dir.path,
       name: 'mesmer_db',
@@ -36,6 +40,9 @@ class IsarService {
       _isar.coachingSessions;
   static IsarCollection<ProgressIndicatorRecord> get progressRecords =>
       _isar.progressIndicatorRecords;
+  static IsarCollection<TrainingSchedule> get trainings =>
+      _isar.trainingSchedules;
+  static IsarCollection<Message> get messages => _isar.messages;
 
   // Generic write helper
   static Future<void> write(Future<void> Function(Isar) actions) async {

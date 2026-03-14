@@ -6,6 +6,7 @@ import 'package:mesmer_app/core/config/router_config.dart';
 import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/loading_overlay.dart';
 import 'package:mesmer_app/core/utils/toast_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -38,7 +39,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (state.hasError) {
       ToastService.showError(context, 'Sign-in failed: ${state.error}');
     } else {
-      context.go(AppRoutes.enterprises);
+      final user = Supabase.instance.client.auth.currentUser;
+      final role = user?.userMetadata?['role'] ?? 'coach';
+      if (role == 'supervisor') {
+        context.go(AppRoutes.supervisorHome);
+      } else if (role == 'enterprise') {
+        context.go(AppRoutes.enterpriseHome);
+      } else {
+        context.go(AppRoutes.coachHome);
+      }
     }
   }
 

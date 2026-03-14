@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:mesmer_app/core/database/isar_service.dart';
 import 'package:mesmer_app/core/network/connectivity_service.dart';
 import 'package:mesmer_app/features/enterprise/repositories/merl_repository.dart';
+import 'package:mesmer_app/features/auth/providers/auth_provider.dart';
 import 'package:mesmer_app/shared/models/coaching_session.dart';
 
 final allSessionsProvider =
@@ -17,7 +18,13 @@ class CoachingNotifier
     extends AsyncNotifier<List<CoachingSession>> {
   @override
   Future<List<CoachingSession>> build() async {
-    return IsarService.sessions.where().findAll();
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return [];
+
+    return IsarService.sessions
+        .filter()
+        .coachIdEqualTo(user.id)
+        .findAll();
   }
 
   Future<void> scheduleSession(CoachingSession session) async {
@@ -26,10 +33,13 @@ class CoachingNotifier
     session.createdAt = DateTime.now();
     session.isSynced = false;
 
+    final user = ref.read(currentUserProvider);
+    session.coachId = user?.id ?? 'unknown';
+
     await IsarService.write((isar) async {
       await isar.coachingSessions.put(session);
     });
-    state = AsyncData(await IsarService.sessions.where().findAll());
+    ref.invalidateSelf();
 
     if (await ConnectivityService.isConnected()) {
       final repo = ref.read(merlRepositoryProvider);
@@ -39,7 +49,7 @@ class CoachingNotifier
         session.syncedAt = DateTime.now();
         await isar.coachingSessions.put(session);
       });
-      state = AsyncData(await IsarService.sessions.where().findAll());
+      ref.invalidateSelf();
     }
   }
 
@@ -65,7 +75,7 @@ class CoachingNotifier
     await IsarService.write((isar) async {
       await isar.coachingSessions.put(session);
     });
-    state = AsyncData(await IsarService.sessions.where().findAll());
+    ref.invalidateSelf();
 
     if (await ConnectivityService.isConnected()) {
       final repo = ref.read(merlRepositoryProvider);
@@ -92,7 +102,7 @@ class CoachingNotifier
     await IsarService.write((isar) async {
       await isar.coachingSessions.put(session);
     });
-    state = AsyncData(await IsarService.sessions.where().findAll());
+    ref.invalidateSelf();
   }
 
   Future<void> completeSession(String uuid) async {
@@ -111,7 +121,7 @@ class CoachingNotifier
     await IsarService.write((isar) async {
       await isar.coachingSessions.put(session);
     });
-    state = AsyncData(await IsarService.sessions.where().findAll());
+    ref.invalidateSelf();
 
     if (await ConnectivityService.isConnected()) {
       final repo = ref.read(merlRepositoryProvider);

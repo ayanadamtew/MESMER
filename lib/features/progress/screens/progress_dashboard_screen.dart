@@ -9,31 +9,38 @@ import 'package:mesmer_app/shared/theme/app_theme.dart';
 import 'package:mesmer_app/shared/widgets/common_widgets.dart';
 
 class ProgressDashboardScreen extends ConsumerWidget {
-  const ProgressDashboardScreen({required this.enterpriseId, super.key});
+  const ProgressDashboardScreen({
+    required this.enterpriseId,
+    this.isEmbedded = false,
+    super.key,
+  });
 
   final String enterpriseId;
+  final bool isEmbedded;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recordsAsync = ref.watch(progressProvider(enterpriseId));
 
-    return Scaffold(
-      appBar: const MesmerAppBar(title: 'Progress Dashboard'),
-      body: recordsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+    final content = recordsAsync.when(
+        loading: () => const Center(child: Padding(padding: EdgeInsets.all(AppSpacing.xl), child: CircularProgressIndicator())),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (records) {
           if (records.isEmpty) {
-            return EmptyStateWidget(
-              icon: Icons.insights_outlined,
-              title: 'No progress data yet',
-              subtitle:
-                  'Add a progress record to start tracking enterprise growth.',
-              action: ElevatedButton.icon(
-                onPressed: () =>
-                    _showAddProgressDialog(context, ref),
-                icon: const Icon(Icons.add),
-                label: const Text('Add Record'),
+            return Center(
+              child: SingleChildScrollView(
+                physics: isEmbedded ? const NeverScrollableScrollPhysics() : null,
+                child: EmptyStateWidget(
+                  icon: Icons.insights_outlined,
+                  title: 'No progress data yet',
+                  subtitle:
+                      'Add a progress record to start tracking enterprise growth.',
+                  action: isEmbedded ? null : ElevatedButton.icon(
+                    onPressed: () => _showAddProgressDialog(context, ref),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add Record'),
+                  ),
+                ),
               ),
             );
           }
@@ -45,7 +52,8 @@ class ProgressDashboardScreen extends ConsumerWidget {
           final latest = sorted.last;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            physics: isEmbedded ? const NeverScrollableScrollPhysics() : null,
+            padding: EdgeInsets.all(isEmbedded ? 0 : AppSpacing.md),
             child: Column(
               children: [
                 // Summary cards
@@ -98,7 +106,7 @@ class ProgressDashboardScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () => _showAddProgressDialog(context, ref),
-                    icon: const Icon(Icons.add_chart_outlined),
+                    icon: const Icon(Icons.add),
                     label: const Text('Add Progress Record'),
                   ),
                 ),
@@ -106,7 +114,15 @@ class ProgressDashboardScreen extends ConsumerWidget {
             ),
           );
         },
-      ),
+      );
+
+    if (isEmbedded) {
+      return content;
+    }
+
+    return Scaffold(
+      appBar: const MesmerAppBar(title: 'Progress Dashboard'),
+      body: content,
     );
   }
 
